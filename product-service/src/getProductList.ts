@@ -1,17 +1,17 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayEvent } from "aws-lambda";
+import { Product } from "services/types";
 
-export const getAllProducts: APIGatewayProxyHandler = async (event, _context) => {
+export const getProductsList = async (event: APIGatewayEvent) => {
+  const productsData: Product[] = require('./productData/productData.json');
   try {
-    if (!event.body) {
-      return {
-        statusCode: 500, 
-        body:  JSON.stringify('Something went wrong !!!')
-      }
-    };
-    const products = await JSON.parse(event.body);
+    const products = JSON.stringify(productsData); 
 
     return {
       statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
       body: JSON.stringify( products )
     }
   } catch (error) {

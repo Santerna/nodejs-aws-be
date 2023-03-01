@@ -1,16 +1,15 @@
 import { APIGatewayEvent } from "aws-lambda";
-import { ProductService } from "./services/types";
+import { Product } from "./services/types";
 
-export const getProductById = (productService: ProductService) =>  async (event: APIGatewayEvent, _context) => {
+export const getProductById = /*(productService: ProductService) =>  */async (event: APIGatewayEvent, _context) => {
     try {
       if (!event.pathParameters) {
         throw new Error('No product id was provided');
       };
-        const { productId = '' } = event.pathParameters;
+        const productsData: Product[] = require('./productData/productData.json');
+        const { id } = event.pathParameters;
 
-        console.log(productId);
-
-        const product = await productService.getProductById(productId);
+        const product = productsData.find((product) => product.id === id);
         if (!product) {
           return {
             statusCode: 404,
@@ -20,6 +19,10 @@ export const getProductById = (productService: ProductService) =>  async (event:
             
         return {
           statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true
+          },
           body: product
         };
     }
