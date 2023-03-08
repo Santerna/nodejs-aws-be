@@ -1,30 +1,34 @@
 import { APIGatewayEvent } from "aws-lambda";
-import { Product } from "./services/types";
+import { DynamoDbProductService } from "services/dynamoDbPproductService";
+import { Product, ProductService } from "./services/types";
 
-export const getProductById = /*(productService: ProductService) =>  */async (event: APIGatewayEvent, _context) => {
+export const getProductById = (productService: ProductService) => async (event: APIGatewayEvent, _context) => {
     try {
       if (!event.pathParameters) {
         throw new Error('No product id was provided');
       };
-        const productsData: Product[] = require('./productData/productData.json');
-        const { id } = event.pathParameters;
+      console.log('Product service', productService);
+      const dbService = new DynamoDbProductService('products-table');
+      const { productId } = event.pathParameters;
+      console.log('Product id', event.pathParameters.productId);
+      const product: Product = await dbService.getProductById(productId);
+      console.log('Product', product);
 
-        const product = productsData.find((product) => product.id === id);
-        if (!product) {
-          return {
-            statusCode: 404,
-            message: "Product not found"
-          };
-        }
-            
+      if (!product) {
         return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true
-          },
-          body: product
+          statusCode: 404,
+          message: "Product not found"
         };
+      }
+            
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
+        },
+        body: product
+      };
     }
     catch (error) {
       return {
