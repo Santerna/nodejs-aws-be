@@ -1,0 +1,23 @@
+{
+  "name": "import-service",
+  "version": "1.0.0",
+  "description": "Import Service",
+  "main": "handler.js",
+  "author": "JSCC",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon handler.ts",
+    "test": "jest",
+    "package-build": "sls package",
+    "deploy": "sls deploy",
+    "remove": "sls remove --region eu-central-1"
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1336.0",
+    "csv-parser": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.113"
+  }
+}
