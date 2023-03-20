@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: import-service
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
@@ -24,24 +11,25 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: eu-central-1
-
- iam:
-   role:
-     statements:
-       - Effect: "Allow"
-         Action:
-           - "s3:ListBucket"
-         Resource: 
-           -"arn:aws"s3:::uploaded"
-       - Effect: "Allow"
-         Action:
-           - "s3:*"
-         Resource:
-             - "arn:aws:s3:::uploaded/*"
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:ListBucket"
+          Resource: 
+            - "arn:aws:s3:::aws-practitioner-store-uploaded"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource:
+            - "arn:aws:s3:::aws-practitioner-store-uploaded/*"
 
 functions:
   importProductsFile:
-    handler: src/importProductsFile.importProductsFile
+    handler: src/importProductsFile/importProductsFile.importProductsFile
     events:
       - http:
           path: import
@@ -50,9 +38,12 @@ functions:
             parameters:
               querystrings:
                 name: true
-  importParseFile:
-    handler: src/importFileParser.importFileParser
+  importFileParser:
+    handler: src/importFileParser/importFileParser.importFileParser
     events:
       - s3:
-          bucket: uploaded
+          bucket: aws-practitioner-store-uploaded
           event: s3:ObjectCreated:*
+          rules:
+           - prefix: uploaded/
+          existing: true

@@ -1,4 +1,3 @@
-// import { S3 } from 'aws-sdk';
 import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
@@ -6,6 +5,7 @@ import {
 import { createSignedUrl } from './createSignedUrl';
 
 export const importProductsFile = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2>=> {
+  console.log('Got upload request', event);
   if (!event.queryStringParameters?.name) {
     return {
       statusCode: 500,
@@ -14,7 +14,7 @@ export const importProductsFile = async (event: APIGatewayProxyEventV2): Promise
   }
 
   const file = event.queryStringParameters.name;
-
+  console.log('File name', file);
   try {
     const url = await createSignedUrl(file);
     return {
