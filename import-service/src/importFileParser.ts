@@ -1,6 +1,6 @@
 import csv from 'csv-parser';
 import { S3Event } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
+import { S3, SQS } from 'aws-sdk';
 import { transferFile } from "./utils/transferFile";
 
 export const importFileParser = /*({ s3 }) => */async (event: S3Event) => {
@@ -8,19 +8,25 @@ export const importFileParser = /*({ s3 }) => */async (event: S3Event) => {
   const bucket = 'aws-practitioner-store-uploaded';
   console.log('Got S3 event', event);
 
+  const sqs = new SQS();
+
   try{
     for (const eventRecord of event.Records) {
     const params: S3.GetObjectRequest  = {
       Bucket: bucket,
       Key: eventRecord.s3.object.key,
     }
-    console.log('S3 event record', eventRecord);
-
+   
     await s3.getObject(params)
       .createReadStream()
       .pipe(csv({ separator: ',' }))
       .on('data', (data) => {
-        console.log(data);
+        sqs.sendMessage({
+          QueueUrl: process.env.SQS_URL,
+          MessageBody: JSON.stringify(data),
+        }, () => {
+          console.log('Send message with ', data);
+        });
       })
       .on('end', async () => {
         console.log('CSV file parsed');

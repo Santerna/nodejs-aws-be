@@ -1,10 +1,7 @@
 import AWS from 'aws-sdk';
-import {  DocumentClient } from 'aws-sdk/clients/dynamodb';
-// import dotenv from 'dotenv';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { v4 as uuidv4 } from 'uuid';
 import { ProductService, Product } from './types';
-
-
-// dotenv.config();
 
 export class DynamoDbProductService implements ProductService{
 
@@ -91,10 +88,11 @@ export class DynamoDbProductService implements ProductService{
   };
 
   async createProduct(productData: Product): Promise<Product> {
+    const id = uuidv4();
     const putParams1 = {
       TableName: this.productTable,
       Item: {
-        id: productData.id,
+        id: id,
         description: productData.description,
         title: productData.title,
         price: productData.price,
@@ -104,7 +102,7 @@ export class DynamoDbProductService implements ProductService{
     const putParams2 = {
       TableName: this.stockTable,
       Item: {
-        product_id: productData.id,
+        product_id: id,
         count: productData.count,
       },
     };
