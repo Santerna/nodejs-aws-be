@@ -1,7 +1,5 @@
-import { S3 } from "aws-sdk";
-
-export const transferFile = async (bucket: string, key: string) => {
-  const s3 = new S3({ region: 'eu-central-1' });
+export const transferFile = async ({ s3 }, bucket: string, key: string) => {
+  // const s3 = new S3({ region: 'eu-central-1' });
   console.log('Transeferring file', { bucket, key });
 
   const copyParams = {

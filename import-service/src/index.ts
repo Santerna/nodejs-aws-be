@@ -1,6 +1,2 @@
-import { importProductsFile } from './importProductsFile';
-import { importFileParser } from './importFileParser/importFileParser';
-
-
-export { importProductsFile };
-export { importFileParser };
+export { importProductsFile } from './importProductsFile';
+export { importFileParser } from './importFileParser';

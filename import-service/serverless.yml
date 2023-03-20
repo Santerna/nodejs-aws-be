@@ -42,7 +42,7 @@ functions:
               querystrings:
                 name: true
   importFileParser:
-    handler: src/importFileParser/importFileParser.importFileParser
+    handler: src/importFileParser.importFileParser
     events:
       - s3:
           bucket: aws-practitioner-store-uploaded
