@@ -2,7 +2,7 @@ import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
 } from 'aws-lambda';
-import { createSignedUrl } from './createSignedUrl';
+import { createSignedUrl } from './utils/createSignedUrl';
 
 export const importProductsFile = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2>=> {
   console.log('Got upload request', event);

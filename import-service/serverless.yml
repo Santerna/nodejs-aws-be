@@ -7,6 +7,9 @@ service: import-service
 # Check out our docs for more details
 frameworkVersion: '3'
 
+plugins:
+  - serverless-webpack
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -29,7 +32,7 @@ provider:
 
 functions:
   importProductsFile:
-    handler: src/importProductsFile/importProductsFile.importProductsFile
+    handler: src/importProductsFile.importProductsFile
     events:
       - http:
           path: import
