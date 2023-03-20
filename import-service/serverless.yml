@@ -38,11 +38,6 @@ provider:
            - "s3:*"
          Resource:
              - "arn:aws:s3:::uploaded/*"
-              
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
 
 functions:
   importProductsFile:
@@ -55,16 +50,9 @@ functions:
             parameters:
               querystrings:
                 name: true
-
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+  importParseFile:
+    handler: src/importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: uploaded
+          event: s3:ObjectCreated:*

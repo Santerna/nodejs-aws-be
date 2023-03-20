@@ -8,7 +8,6 @@
   "scripts": {
     "start": "nodemon handler.ts",
     "test": "jest",
-    "package-build": "sls package",
     "deploy": "sls deploy",
     "remove": "sls remove --region eu-central-1"
   },
