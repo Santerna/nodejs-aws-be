@@ -3,7 +3,7 @@ import {
   APIGatewayProxyResultV2,
 } from 'aws-lambda';
 import { ProductService } from 'services/types';
-import { validateProductData } from 'utils/validation';
+import { validateProductData } from './utils/validation';
 
 export const createProduct = (productService: ProductService) => async (event: APIGatewayProxyEventV2, _context): Promise<APIGatewayProxyResultV2> => {
   try {

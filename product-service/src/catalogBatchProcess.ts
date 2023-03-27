@@ -1,12 +1,12 @@
-import { SQSEvent } from "aws-lambda";
-import AWS, { SQS } from "aws-sdk";
+import { SQSEvent } from 'aws-lambda';
+import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
 const PRODUCT_TABLE = process.env.DYNAMODB_PRODUCTS_TABLE_NAME;
 const STOCK_TABLE = process.env.DYNAMODB_STOCK_TABLE_NAME;
 
-export const catalogBatchProcess = async (event: SQSEvent) => {
-  const sqs = new SQS();
+export const catalogBatchProcess = async (event: SQSEvent): Promise<void> => {
+  const sns = new AWS.SNS({ region: 'eu-central-1' });
   const products = event.Records;
   const documentClient = new AWS.DynamoDB.DocumentClient();
   const productTableData = [];
@@ -15,6 +15,7 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
   products.forEach((product) => {
     console.log('Got product item', product);
     const productData = JSON.parse(product.body);
+    console.log('Products from event', productData);
     const id = uuidv4();
     productTableData.push({
       PutRequest: {
@@ -64,6 +65,18 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
       throw new Error(error.message);
     } else {
       console.log('Put data succesfully', data);
+    }
+  });
+
+  sns.publish({
+    Subject: 'Created products',
+    Message: JSON.stringify(products),
+    TopicArn: process.env.SNS_ARN,
+  }, (error, data) => {
+    if (error) {
+      throw new Error(error.message);
+    } else {
+      console.log('Publish data succesfully', data);
     }
   });
 };

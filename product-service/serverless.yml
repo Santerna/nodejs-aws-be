@@ -16,7 +16,9 @@ provider:
     DYNAMODB_PRODUCTS_TABLE: ${env:DYNAMODB_PRODUCTS_TABLE_NAME}
     DYNAMODB_STOCK_TABLE: ${env:DYNAMODB_STOCK_TABLE_NAME}
     SQS_URL:
-      Ref: SQSQueue 
+      Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
 
   httpApi:
     cors: true
@@ -24,12 +26,33 @@ provider:
   iamManagedPolicies:
     - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "sqs:*"
+      Resource:
+        - Fn::GetAtt: [ SQSQueue, Arn ]
+    - Effect: "Allow"
+      Action: "sns:*"
+      Resource:
+        Ref: SNSTopic
+
 resources:
   Resources:
     SQSQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:SNS_SUBSCRIPTION_EMAIL}
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
 
 functions:
   getProductsList:
@@ -54,9 +77,9 @@ functions:
     handler: src/catalogBatchProcess.catalogBatchProcess
     events:
       - sqs:
-        batchSize: 5
-        arn:
-          Fn::GetAtt:
-            - SQSQueue
-            - Arn
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
   

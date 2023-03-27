@@ -18,7 +18,7 @@ describe('getProductList', () => {
       headers: {},
       httpMethod: 'get'
     } as unknown as APIGatewayProxyEventV2;
-    const productSevice = new DynamoDbProductService('', '');
+    const productSevice = new DynamoDbProductService();
     const response = await productSevice.getProductsList();
     expect(response).toHaveProperty('statusCode', 200);
     expect(response).toHaveProperty('body', '');

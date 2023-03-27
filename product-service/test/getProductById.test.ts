@@ -9,7 +9,7 @@ describe('getProductById', () => {
       httpMethod: 'get',
       pathParameters: { id: "7567ec4b-b10c-48c5-9345-fc73c48a80a2" }
     } as unknown as APIGatewayProxyEvent;
-    const productSevice = new DynamoDbProductService('', '');
+    const productSevice = new DynamoDbProductService();
     const response = await productSevice.getProductById(mockEvent.pathParameters.id);
     expect(response).toHaveProperty('statusCode', 200);
     expect(response).toEqual({
@@ -28,7 +28,7 @@ describe('getProductById', () => {
       httpMethod: 'get',
       pathParameters: { productId: '1' },
     } as unknown as APIGatewayProxyEventV2;
-    const productSevice = new DynamoDbProductService('', '');
+    const productSevice = new DynamoDbProductService();
     const response = await productSevice.getProductById(mockEvent.pathParameters.id);
     expect(response).toHaveProperty('statusCode', 404);
   });
