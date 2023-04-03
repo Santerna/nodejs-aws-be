@@ -1,0 +1,70 @@
+service: import-service
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: '3'
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-central-1
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:ListBucket"
+          Resource: 
+            - "arn:aws:s3:::aws-practitioner-store-uploaded"
+        - Effect: "Allow"
+          Action:
+            - "s3:*"
+          Resource:
+            - "arn:aws:s3:::aws-practitioner-store-uploaded/*"
+
+functions:
+  importProductsFile:
+    handler: src/importProductsFile.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+          authorizer: {
+            arn: "arn:aws:lambda:eu-central-1:616102254921:function:authorization-service-dev-basicAuthorizer",
+            type: "token",
+            resultTtlInSeconds: 0
+          }
+  importFileParser:
+    handler: src/importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: aws-practitioner-store-uploaded
+          event: s3:ObjectCreated:*
+          rules:
+           - prefix: uploaded/
+          existing: true
+
+
+resources:
+  Resources:
+    GatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.WWW-Authenticate: "'Basic'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        StatusCode: '401'
