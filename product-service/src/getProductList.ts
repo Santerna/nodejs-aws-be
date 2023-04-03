@@ -2,7 +2,6 @@ import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2
 } from 'aws-lambda';
-import AWS from 'aws-sdk';
 import { DynamoDbProductService } from './services/dynamoDbPproductService';
 import { ProductService } from './services/types';
 

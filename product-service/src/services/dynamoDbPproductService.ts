@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { v4 as uuidv4 } from 'uuid';
 import { ProductService, Product } from './types';
 
 export class DynamoDbProductService implements ProductService{
@@ -87,8 +86,7 @@ export class DynamoDbProductService implements ProductService{
     }
   };
 
-  async createProduct(productData: Product): Promise<Product> {
-    const id = uuidv4();
+  async createProduct(id: string, productData: Product): Promise<Product> {
     const putParams1 = {
       TableName: this.productTable,
       Item: {
@@ -117,3 +115,7 @@ export class DynamoDbProductService implements ProductService{
     return { ...product, count: stock.count } as Product;
   };
 };
+function uuidv4() {
+  throw new Error('Function not implemented.');
+}
+

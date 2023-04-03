@@ -41,6 +41,11 @@ functions:
             parameters:
               querystrings:
                 name: true
+          authorizer: {
+            arn: "arn:aws:lambda:eu-central-1:616102254921:function:authorization-service-dev-basicAuthorizer",
+            type: "token",
+            resultTtlInSeconds: 0
+          }
   importFileParser:
     handler: src/importFileParser.importFileParser
     events:
@@ -50,3 +55,16 @@ functions:
           rules:
            - prefix: uploaded/
           existing: true
+
+
+resources:
+  Resources:
+    GatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.WWW-Authenticate: "'Basic'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        StatusCode: '401'

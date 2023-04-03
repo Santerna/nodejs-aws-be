@@ -2,6 +2,7 @@ import {
   APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
 } from 'aws-lambda';
+import { nanoid } from 'nanoid';
 import { ProductService } from 'services/types';
 import { validateProductData } from './utils/validation';
 
@@ -11,7 +12,8 @@ export const createProduct = (productService: ProductService) => async (event: A
     const productData = JSON.parse(Buffer.from(event.body, 'base64').toString());
     console.log('Product data', productData);
     validateProductData(productData);
-    const product = await productService.createProduct(productData);
+    const id = nanoid();
+    const product = await productService.createProduct(id, productData);
     console.log('Products list', product);
 
     return {

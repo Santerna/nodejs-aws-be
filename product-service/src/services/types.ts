@@ -9,5 +9,5 @@ export interface Product {
 export interface ProductService {
   getProductById: (id: string) => Promise<Product | undefined>,
   getProductsList: () => Promise<Product[]>,
-  createProduct: (productData: Product) => Promise<Product>,
+  createProduct: (id: string, productData: Product) => Promise<Product>,
 }
